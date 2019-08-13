@@ -37,7 +37,6 @@ require_once 'responses/GetManagedArticlePricesResponse.php';
 class ChannelPilotSellerAPI_v3_2 extends SoapClient {
 
     private $auth;
-    private $wsdlUrl = 'https://release.seller.api.channelpilot.com/3_2?wsdl';
     private $soapOptions = array(
         'connection_timeout' => 20,
         'features' => SOAP_SINGLE_ELEMENT_ARRAYS
@@ -77,7 +76,7 @@ class ChannelPilotSellerAPI_v3_2 extends SoapClient {
                 $this->soapOptions['classmap'][$key] = $value;
             }
         }
-        parent::__construct($this->wsdlUrl, $this->soapOptions);
+        parent::__construct($this->getWsdlUrl(), $this->soapOptions);
     }
 
     /**
@@ -190,5 +189,13 @@ class ChannelPilotSellerAPI_v3_2 extends SoapClient {
                 new SoapParam($refunds, 'refunds')
             )     
         );
+    }
+	
+	/**
+     * @return string
+     */
+    public function getWsdlUrl()
+    {
+        return Mage::getStoreConfig('channelpilot_general/channelpilot_general/seller_api_wsdl_url');
     }
 }

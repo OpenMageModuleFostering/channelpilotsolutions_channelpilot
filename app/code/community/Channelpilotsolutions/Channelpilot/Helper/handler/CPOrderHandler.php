@@ -511,6 +511,7 @@ class CPOrderHandler extends CPAbstractHandler {
             }
 			
 			$statusHistoryComment = "";
+			
 			switch (Mage::getStoreConfig('channelpilot_marketplace/channelpilot_marketplace/which_field_for_externalTransactionId')) {
 				case 'orderComment':
 					if(!empty($apiOrder->orderHeader->orderIdExternalTransactionId)){

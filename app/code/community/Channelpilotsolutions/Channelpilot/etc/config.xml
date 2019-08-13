@@ -24,7 +24,7 @@
 <config>
 	<modules>
 		<Channelpilotsolutions_Channelpilot>
-			<version>2.3.1</version>
+			<version>2.3.2</version>
 		</Channelpilotsolutions_Channelpilot>
 	</modules>
 	<global>
