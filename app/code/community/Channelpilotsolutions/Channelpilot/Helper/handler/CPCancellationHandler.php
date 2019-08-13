@@ -38,7 +38,7 @@ class CPCancellationHandler extends CPAbstractHandler {
 				self::hookResult(false);
 			}
 			$merchantId = self::getMerchantId($token);
-			$api = new ChannelPilotSellerAPI_v1_0($merchantId, $token);
+			$api = new ChannelPilotSellerAPI_v3_2($merchantId, $token);
 			$result = $api->registerCancellations($cancelled);
 			if ($result->header->resultCode == CPResultCodes::SUCCESS) {
 				self::changeStatusOrders($result->updateResults);

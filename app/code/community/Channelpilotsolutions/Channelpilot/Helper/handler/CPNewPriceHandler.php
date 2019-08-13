@@ -26,7 +26,7 @@ class CPNewPriceHandler extends CPAbstractHandler {
 				}
 				$filterArticles = null;
 
-				$api = new ChannelPilotSellerAPI_v1_0($merchantId, $token);
+				$api = new ChannelPilotSellerAPI_v3_2($merchantId, $token);
 				$result = $api->getDynamicArticlePrices($priceId, $method, $filterArticles, $filterFrom);
 				$unknownArticles = array();
 				$lastPriceUpdate = null;

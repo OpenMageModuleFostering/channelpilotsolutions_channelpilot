@@ -3,11 +3,12 @@
 /**
  * meta-data for an order.
  * @author Channel Pilot Solutions GmbH <api@channelpilot.com>
- * @version 1.0
+ * @version 2.0
  */
 class CPOrderHeader {
 	public $orderId;
 	public $orderIdExternal;
+	public $orderIdExternalTransactionId;
 	
 	public $status;
 	

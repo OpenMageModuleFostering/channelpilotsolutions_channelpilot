@@ -131,7 +131,7 @@ class CPDeliveryHandler extends CPAbstractHandler {
 					}
 
 					$merchantId = self::getMerchantId($token);
-					$api = new ChannelPilotSellerAPI_v1_0($merchantId, $token);
+					$api = new ChannelPilotSellerAPI_v3_2($merchantId, $token);
 					$result = $api->registerDeliveries($deliveries);
 					if ($result->header->resultCode == CPResultCodes::SUCCESS) {
 						$defectiveOrderIncrementIds = self::changeStatusOrders($result->updateResults);

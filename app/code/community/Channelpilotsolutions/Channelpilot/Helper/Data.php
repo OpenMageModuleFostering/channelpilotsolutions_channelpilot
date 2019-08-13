@@ -43,9 +43,9 @@ require_once 'responses/CPGetStatusHookResponse.php';
 require_once 'responses/CPRegisterHookResponse.php';
 
 //	API
-require_once 'api/1_0/thin/CPDelivery.php';
-require_once 'api/1_0/ChannelPilotSellerAPI_v1_0.php';
-require_once 'api/1_0/CPResultCodes.php';
+require_once 'api/3_2/thin/CPDelivery.php';
+require_once 'api/3_2/ChannelPilotSellerAPI_v3_2.php';
+require_once 'api/3_2/CPResultCodes.php';
 
 //	special customer functions
 require_once 'special/CustomerFunctions.php';

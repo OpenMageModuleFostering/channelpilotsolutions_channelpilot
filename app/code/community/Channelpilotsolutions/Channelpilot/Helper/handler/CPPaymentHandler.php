@@ -45,7 +45,7 @@ class CPPaymentHandler extends CPAbstractHandler {
                         self::hookResult(false);
                     }
                     $merchantId = self::getMerchantId($token);
-                    $api = new ChannelPilotSellerAPI_v1_0($merchantId, $token);
+                    $api = new ChannelPilotSellerAPI_v3_2($merchantId, $token);
                     $result = $api->setPaidOrders($paidOrders);
                     if ($result->header->resultCode == CPResultCodes::SUCCESS) {
                         $affectedRows = Mage::getModel('channelpilot/order')->massSetOrderPaid($paidOrders);

@@ -7,6 +7,8 @@
  */
 class CPOrderHandler extends CPAbstractHandler {
 
+    const FAKE_PHONE_NUMBER = 1234567890;
+
 	protected $shopId;
     protected $store;
     protected $websiteId;
@@ -27,7 +29,7 @@ class CPOrderHandler extends CPAbstractHandler {
 				$this->websiteId = $this->store->getWebsiteId();
 				$oldOrders = self::getOrdersFromDb();
 				ini_set('allow_url_fopen', 'On');
-				$api = new ChannelPilotSellerAPI_v1_0($merchantId, $token);
+				$api = new ChannelPilotSellerAPI_v3_2($merchantId, $token);
 				$result = $api->getNewMarketplaceOrders();
 				//	Check ResultCode of getNewMarketplaceOrders Result
 				if ($result->header->resultCode == CPResultCodes::SUCCESS) {
@@ -121,14 +123,16 @@ class CPOrderHandler extends CPAbstractHandler {
 
             // set total values
             // total gross
-            $quote->setGrandTotal($apiOrder->summary->totalSumOrder->gross);
-            $quote->setBaseGrandTotal($apiOrder->summary->totalSumOrder->gross);
+            $quote->setGrandTotal($apiOrder->summary->totalSumOrder->gross-$apiOrder->discount->gross);
+            $quote->setBaseGrandTotal($apiOrder->summary->totalSumOrder->gross-$apiOrder->discount->gross);
 
             // net
             $quote->setSubtotal($apiOrder->summary->totalSumOrder->net);
             $quote->setBaseSubtotal($apiOrder->summary->totalSumOrder->net);
-            $quote->setSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net);
-            $quote->setBaseSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net);
+			
+			// discount
+            $quote->setSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net-$apiOrder->discount->net);
+            $quote->setBaseSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net-$apiOrder->discount->net);
 
             // set item values
             /** @var  $item Mage_Sales_Model_Quote_Item */
@@ -157,7 +161,13 @@ class CPOrderHandler extends CPAbstractHandler {
                         // total gross
                         $item->setRowTotalInclTax($orderItem->costsTotal->gross);
                         $item->setBaseRowTotalInclTax($orderItem->costsTotal->gross);
-
+						
+						//Discount
+						$item->setRowTotalWithDiscount($orderItem->costsTotal->gross-$apiOrder->discount->gross);
+						$item->setBaseRowTotalWithDiscount($orderItem->costsTotal->gross-$apiOrder->discount->gross);
+						$item->setDiscountAmount($orderItem->discount->gross*(-1));
+						$item->setBaseDiscountAmount ($orderItem->discount->gross*(-1));
+						
                         $item->save();
                     }
                 }
@@ -229,24 +239,14 @@ class CPOrderHandler extends CPAbstractHandler {
             if(array_key_exists($orderItem->article->id, $temp)) {
                 // add the additonal row to the first one
                 $temp[$orderItem->article->id]->quantityOrdered += $orderItem->quantityOrdered;
-                $temp[$orderItem->article->id]->costsTotal->net = $temp[$orderItem->article->id]->costsSingle->net * $temp[$orderItem->article->id]->quantityOrdered;
-                $temp[$orderItem->article->id]->costsTotal->gross = $temp[$orderItem->article->id]->costsSingle->gross * $temp[$orderItem->article->id]->quantityOrdered;
-                $temp[$orderItem->article->id]->costsTotal->tax = $temp[$orderItem->article->id]->costsSingle->tax * $temp[$orderItem->article->id]->quantityOrdered;
-
-                // calculate the totals for the current orderItem
-                $costsNet = $orderItem->quantityOrdered * $orderItem->costsSingle->net;
-                $costsGross = $orderItem->quantityOrdered * $orderItem->costsSingle->gross;
-                $costsTax = $orderItem->quantityOrdered * $orderItem->costsSingle->tax;
-
-                // add the calculated totals to the item summary
-                $apiOrder->summary->totalSumItems->net = $apiOrder->summary->totalSumItems->net + $costsNet;
-                $apiOrder->summary->totalSumItems->gross = $apiOrder->summary->totalSumItems->gross + $costsGross;
-                $apiOrder->summary->totalSumItems->tax = $apiOrder->summary->totalSumItems->tax + $costsTax;
-
-                // add the calculated totals to the order summary
-                $apiOrder->summary->totalSumOrder->net = $apiOrder->summary->totalSumOrder->net + $costsNet;
-                $apiOrder->summary->totalSumOrder->gross = $apiOrder->summary->totalSumOrder->gross + $costsGross;
-                $apiOrder->summary->totalSumOrder->tax = $apiOrder->summary->totalSumOrder->tax + $costsTax;
+                $temp[$orderItem->article->id]->costsTotal->net += $orderItem->costsTotal->net;
+				$temp[$orderItem->article->id]->costsTotal->gross += $orderItem->costsTotal->gross;
+				$temp[$orderItem->article->id]->costsTotal->net += $orderItem->costsTotal->net;
+				
+                $apiOrder->summary->totalSumItems->net = $temp[$orderItem->article->id]->costsTotal->net;
+                $apiOrder->summary->totalSumItems->gross = $temp[$orderItem->article->id]->costsTotal->gross;
+                $apiOrder->summary->totalSumItems->tax = $temp[$orderItem->article->id]->costsTotal->tax;
+              
             } else {
                 $temp[$orderItem->article->id] = $orderItem;
             }
@@ -323,9 +323,9 @@ class CPOrderHandler extends CPAbstractHandler {
             $order = $service->getOrder();
             $items = $order->getAllItems();
 			
+			$idField = Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_articlenumber');
 			$orderItemIds = self::getSavedOrderItemArticleIds($items, $idField);
 			$articleIds = self::getOrderedArticleIds($apiOrder);
-			
             // check if the order has items and the amount of items matches the amount from the seller api
             if(count($orderItemIds) == 0 || count($articleIds) != count($orderItemIds)) {
                 if(!Mage::registry('isSecureArea')) {
@@ -333,8 +333,6 @@ class CPOrderHandler extends CPAbstractHandler {
                 }
                 Mage::app('admin');
                 $order->delete();
-				
-                $idField = Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_articlenumber');
 
                 $articleCount = count($articleIds);
                 $orderItemCount = count($orderItemIds);
@@ -381,7 +379,8 @@ class CPOrderHandler extends CPAbstractHandler {
 
 			$orderItemsResponse = array();
 			try {
-				foreach ($items as $item) {
+                /** @var  $item  Mage_Sales_Model_Order_Item */
+                foreach ($items as $item) {
 					foreach ($apiOrder->itemsOrdered as $orderItem) {
 						if ($orderItem->article->id == $item->getSku() || $orderItem->article->id == $item->getProductId()) {
                             $item->setPrice($orderItem->costsSingle->net);
@@ -400,6 +399,15 @@ class CPOrderHandler extends CPAbstractHandler {
                             $item->setBaseRowTotal($orderItem->costsTotal->net);
                             $item->setRowTotalInclTax($orderItem->costsTotal->gross);
                             $item->setBaseRowTotalInclTax($orderItem->costsTotal->gross);
+							
+							$item->setRowTotalWithDiscount($orderItem->costsTotal->gross-$apiOrder->discount->gross);
+							$item->setBaseRowTotalWithDiscount($orderItem->costsTotal->gross-$apiOrder->discount->gross);
+							
+							//discount
+							$item->setDiscountAmount($orderItem->discount->gross);
+							$item->setBaseDiscountAmount($orderItem->discount->gross);
+
+                            $item->setExtOrderItemId($orderItem->idExternal);
 
 							$item->save();
 							$orderItem->id = $item->getId();
@@ -466,8 +474,14 @@ class CPOrderHandler extends CPAbstractHandler {
             $order->setBaseShippingInclTax($apiOrder->shipping->costs->gross);
 
             // Grand total
-			$order->setBaseGrandTotal($apiOrder->summary->totalSumOrder->gross);
-            $order->setGrandTotal($apiOrder->summary->totalSumOrder->gross);
+			$order->setBaseGrandTotal($apiOrder->summary->totalSumOrder->gross-$apiOrder->discount->gross);
+            $order->setGrandTotal($apiOrder->summary->totalSumOrder->gross-$apiOrder->discount->gross);
+			
+			//discount
+            $order->setSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net-$apiOrder->discount->net);
+            $order->setBaseSubtotalWithDiscount($apiOrder->summary->totalSumOrder->net-$apiOrder->discount->net);
+			$order->setDiscountAmount($apiOrder->discount->gross*(-1));
+			$order->setBaseDiscountAmount($apiOrder->discount->gross*(-1));
 
 			$order->setCreatedAt($apiOrder->orderHeader->orderTime);
 
@@ -482,7 +496,44 @@ class CPOrderHandler extends CPAbstractHandler {
 				$order->setData('state', Mage::getStoreConfig('channelpilot_marketplace/channelpilot_marketplace/channelpilot_orderStatusImportedUnpayed'));
 				$order->setStatus(Mage::getStoreConfig('channelpilot_marketplace/channelpilot_marketplace/channelpilot_orderStatusImportedUnpayed'));
 			}
+			
+			if(strpos($apiOrder->orderHeader->source, 'ebay') !== false 
+				&& Mage::getStoreConfig('channelpilot_marketplace/channelpilot_marketplace/which_external_id_for_ebay_orders')  == 'externalTransactionId' 
+				&& !empty($apiOrder->orderHeader->orderIdExternalTransactionId)) {
+				$order->setExtOrderId($apiOrder->orderHeader->orderIdExternalTransactionId);
+			} else {
+				$order->setExtOrderId($apiOrder->orderHeader->orderIdExternal);
+			}
 
+            $msg = $this->_getOrderComments($apiOrder);
+            if(!empty($msg)) {
+                $order->addStatusHistoryComment($msg, false);
+            }
+			
+			$statusHistoryComment = "";
+			switch (Mage::getStoreConfig('channelpilot_marketplace/channelpilot_marketplace/which_field_for_externalTransactionId')) {
+				case 'orderComment':
+					if(!empty($apiOrder->orderHeader->orderIdExternalTransactionId)){
+						$statusHistoryComment .= "External Transaction ID: <b>".$apiOrder->orderHeader->orderIdExternalTransactionId."</b><br/><br/>";
+					};
+					break;
+			}
+			if(!empty($apiOrder->orderHeader->purchaseOrderNumber)) {
+				$statusHistoryComment .= "Purchase Order Number: <b>".$apiOrder->orderHeader->purchaseOrderNumber."</b><br/><br/>";
+ 			}
+			if(!empty($apiOrder->expectedShippingTimeFrom)) {
+				$statusHistoryComment .= "Expected Shipping Time from: <b>".$apiOrder->expectedShippingTimeFrom."</b><br/><br/>";
+			}
+			if(!empty($apiOrder->expectedShippingTimeTo)) {
+				$statusHistoryComment .= "Expected Shipping Time to: <b>".$apiOrder->expectedShippingTimeTo."</b><br/><br/>";
+			}
+			if($apiOrder->orderHeader->isBusinessOrder!==false){
+				$statusHistoryComment .= "<b>B2B Order"."</b><br/><br/>"; 
+			}
+			if ($statusHistoryComment!="") {
+				$order->addStatusHistoryComment($statusHistoryComment, false);
+			}
+			
 			$order->save();
 		} catch (Exception $e) {
             self::deleteCPOrder($order->getId());
@@ -500,6 +551,52 @@ class CPOrderHandler extends CPAbstractHandler {
 
 		return $apiOrder;
 	}
+
+    /**
+     * Creates a string that is used as a comment for the order.
+     * @param $apiOrder
+     * @return string
+     */
+    protected function _getOrderComments($apiOrder) {
+        $helper = Mage::helper('channelpilot');
+
+        $msg = "";
+
+        // create a message that state that the order is being imported from ChannelPilot if this feature has been enabled
+        if(Mage::getStoreConfigFlag("channelpilot_marketplace/channelpilot_marketplace/create_order_comment", $this->shopId)) {
+            $msg = $helper->__(
+                "The order has been imported from ChannelPilot and was placed on %s with the order number %s",
+                $apiOrder->orderHeader->source,
+                $apiOrder->orderHeader->orderIdExternal
+            );
+        }
+
+        // create an info message that states that the phone number for the delivery address is empty and changed to the fake one
+        if (isset($apiOrder->addressDelivery->phone) && empty($apiOrder->addressDelivery->phone)) {
+            if(!empty($msg)) {
+                $msg .= "<br/><br/>";
+            }
+            $msg .= $helper->__(
+                "The customer did not enter a phone number for the %s. To prevent import errors, the fake phone number %s has been added instead.",
+                $helper->__("delivery address"),
+                self::FAKE_PHONE_NUMBER
+            );
+        }
+
+        // create an info message that states that the phone number for the billing address is empty and changed to the fake one
+        if (isset($apiOrder->addressInvoice->phone) && empty($apiOrder->addressInvoice->phone)) {
+            if(!empty($msg)) {
+                $msg .= "<br/><br/>";
+            }
+            $msg .= $helper->__(
+                "The customer did not enter a phone number for the %s. To prevent import errors, the fake phone number %s has been added instead.",
+                $helper->__("billing address"),
+                self::FAKE_PHONE_NUMBER
+            );
+        }
+
+        return $msg;
+    }
 
 	/**
 	 *
@@ -534,6 +631,24 @@ class CPOrderHandler extends CPAbstractHandler {
 		$customer = Mage::getModel('customer/customer')
 				->setWebsiteId($this->websiteId)
 				->loadByEmail(CustomerFunctions::getUserName($apiOrder->customer->email));
+
+        $phoneDelivery = null;
+        $phoneBilling = null;
+
+        if (isset($apiOrder->addressDelivery->phone)) {
+            $phoneDelivery = $apiOrder->addressDelivery->phone;
+            if(empty($phoneDelivery)) {
+                $phoneDelivery = self::FAKE_PHONE_NUMBER;
+            }
+        }
+
+        if (isset($apiOrder->addressInvoice->phone)) {
+            $phoneBilling = $apiOrder->addressInvoice->phone;
+            if(empty($phoneBilling)) {
+                $phoneBilling = self::FAKE_PHONE_NUMBER;
+            }
+        }
+
 		if ($customer->getId() == null) {
 			$customer = Mage::getModel("customer/customer");
 			$customer->website_id = $this->websiteId;
@@ -585,9 +700,7 @@ class CPOrderHandler extends CPAbstractHandler {
 			if (isset($apiOrder->addressDelivery->company)) {
 				$shippingAddress->setCompany($apiOrder->addressDelivery->company);
 			}
-			if (isset($apiOrder->addressDelivery->phone)) {
-				$shippingAddress->setTelephone($apiOrder->addressDelivery->phone);
-			}
+            $shippingAddress->setTelephone($phoneDelivery);
 			$shippingAddress = CustomerFunctions::createAddress($shippingAddress, $apiOrder);
 			$shippingAddress->setIsDefaultShipping(true);
 			$shippingAddress->save();
@@ -608,9 +721,7 @@ class CPOrderHandler extends CPAbstractHandler {
 			if (isset($apiOrder->addressInvoice->company)) {
 				$billingAddress->setCompany($apiOrder->addressInvoice->company);
 			}
-			if (isset($apiOrder->addressInvoice->phone)) {
-				$billingAddress->setTelephone($apiOrder->addressInvoice->phone);
-			}
+            $billingAddress->setTelephone($phoneBilling);
 			$billingAddress = CustomerFunctions::createAddress($billingAddress, $apiOrder);
 			$billingAddress->setIsDefaultBilling(true);
 			$billingAddress->save();
@@ -658,9 +769,7 @@ class CPOrderHandler extends CPAbstractHandler {
 			if (isset($apiOrder->addressDelivery->company)) {
 				$shippingAddress->setCompany($apiOrder->addressDelivery->company);
 			}
-			if (isset($apiOrder->addressDelivery->phone)) {
-				$shippingAddress->setTelephone($apiOrder->addressDelivery->phone);
-			}
+            $shippingAddress->setTelephone($phoneDelivery);
 			$shippingAddress = CustomerFunctions::createAddress($shippingAddress, $apiOrder);
 			$shippingAddress->setIsDefaultShipping(true);
 			$shippingAddress->save();
@@ -679,9 +788,7 @@ class CPOrderHandler extends CPAbstractHandler {
 			if (isset($apiOrder->addressInvoice->company)) {
 				$billingAddress->setCompany($apiOrder->addressInvoice->company);
 			}
-			if (isset($apiOrder->addressInvoice->phone)) {
-				$billingAddress->setTelephone($apiOrder->addressInvoice->phone);
-			}
+            $billingAddress->setTelephone($phoneBilling);
 			$billingAddress = CustomerFunctions::createAddress($billingAddress, $apiOrder);
 			$billingAddress->setIsDefaultBilling(true);
 			$billingAddress->save();

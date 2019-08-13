@@ -86,7 +86,7 @@
 "CP Warning, this will delete all entries and the data has to be reindexed. Proceed ?","Warning, this will delete all entries and the data has to be reindexed. Do you wish to proceed ?"
 "CP Truncate Index Table","Truncate Index Table"
 
-"CP Default url: https://seller.api.channelpilot.com/1_0?wsdl", "Default url: https://seller.api.channelpilot.com/1_0?wsdl"
+"CP Default url: https://seller.api.channelpilot.com/3_2?wsdl", "Default url: https://seller.api.channelpilot.com/3_2?wsdl"
 "CP Seller api wsdl url","Seller api wsdl url"
 
 "CP Product Url Generation Method","Product Url Generation Method"
@@ -95,3 +95,5 @@
 "CP base url + url_key + .html","base url + url_key + .html"
 "CP Method getProductUrl","Method getProductUrl"
 "CP Method getUrlInStore","Method getUrlInStore"
+
+"CP In which field you want to save the externalTransactionId?","In which field you want to save the externalTransactionId?"

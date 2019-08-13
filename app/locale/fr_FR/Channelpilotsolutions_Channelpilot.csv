@@ -62,3 +62,5 @@
 "CP Ship to Specific Countries","Transports vers pays particuliers"
 "CP Displayed Error Message","Message d’erreur affiché"
 "CP Sort Order","Trier les commandes"
+
+"CP In which field you want to save the externalTransactionId?","Dans quel champ de données souhaitez vous enregistrer votre externalTransactionId?"

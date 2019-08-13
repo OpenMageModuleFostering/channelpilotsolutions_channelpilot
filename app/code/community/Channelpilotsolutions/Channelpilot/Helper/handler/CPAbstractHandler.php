@@ -9,7 +9,7 @@ class CPAbstractHandler {
 
 	const defaultHeader = "Content-Type: application/json;";
 	const errorHeader_forbidden = "HTTP/1.0 403 Forbidden";
-	const ChannelPilot_IP = "148.251.65.130";
+	const ChannelPilot_IP = "85.10.230.194";
 	const DB_REGISTRATION = "cp_registration";
 	const DB_PRICES = "cp_prices";
 	const DB_ORDERS = "cp_marketplace_orders";

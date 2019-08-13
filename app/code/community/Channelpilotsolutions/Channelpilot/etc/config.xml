@@ -24,7 +24,7 @@
 <config>
 	<modules>
 		<Channelpilotsolutions_Channelpilot>
-			<version>2.2.8</version>
+			<version>2.3.0</version>
 		</Channelpilotsolutions_Channelpilot>
 	</modules>
 	<global>
@@ -174,7 +174,7 @@
                 <channelpilot_useNews>0</channelpilot_useNews>
                 <channelpilot_checkIp>1</channelpilot_checkIp>
                 <channelpilot_articlenumber>product_id</channelpilot_articlenumber>
-                <seller_api_wsdl_url>https://seller.api.channelpilot.com/1_0?wsdl</seller_api_wsdl_url>
+                <seller_api_wsdl_url>https://seller.api.channelpilot.com/3_2?wsdl</seller_api_wsdl_url>
             </channelpilot_general>
         </channelpilot_general>
         <channelpilot_tracking>
@@ -195,8 +195,18 @@
             <channelpilot_marketplace>
                 <channelpilot_useMarketplaces>0</channelpilot_useMarketplaces>
                 <use_admin_mode>0</use_admin_mode>
+                <create_order_comment>0</create_order_comment>
+                <which_external_id_for_ebay_orders>orderId</which_external_id_for_ebay_orders>
             </channelpilot_marketplace>
         </channelpilot_marketplace>
+		<channelpilot_marketplace>
+			<channelpilot_marketplace>
+                <channelpilot_useMarketplaces>0</channelpilot_useMarketplaces>
+                <use_admin_mode>0</use_admin_mode>
+                <create_order_comment>0</create_order_comment>
+                <which_field_for_externalTransactionId>orderComment</which_field_for_externalTransactionId>
+            </channelpilot_marketplace>
+		</channelpilot_marketplace>
         <channelpilot_pricecontrol>
             <channelpilot_general>
                 <channelpilot_usePricecontrol>0</channelpilot_usePricecontrol>
