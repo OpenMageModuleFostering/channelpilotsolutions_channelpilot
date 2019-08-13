@@ -1,0 +1,183 @@
+<?xml version="1.0"?><!--
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Channelpilotsolutions_Channelpilot to newer
+ * versions in the future. If you wish to customize Channelpilotsolutions_Channelpilot for your
+ * needs please refer to http://www.channelpilot.com for more information.
+ *
+ * @category        Channelpilotsolutions
+ * @package         Channelpilotsolutions_Channelpilot
+ * @subpackage		etc
+ * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
+ * @author          Peter Hoffmann <info@channelpilot.com>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.channelpilot.com
+ */
+-->
+<config>
+	<modules>
+		<Channelpilotsolutions_Channelpilot>
+			<version>2.2.3</version>
+		</Channelpilotsolutions_Channelpilot>
+	</modules>
+	<global>
+		<models>
+			<channelpilot_adminhtml>
+				<class>Channelpilotsolutions_Channelpilot_Adminhtml_Model</class>
+			</channelpilot_adminhtml>
+			<channelpilot>
+				<class>Channelpilotsolutions_Channelpilot_Model</class>
+				<resourceModel>channelpilot_resource</resourceModel>
+			</channelpilot>
+			<channelpilot_resource>
+                <class>Channelpilotsolutions_Channelpilot_Model_Resource</class>
+				<entities>
+					<registration>
+						<table>cp_registration</table>
+					</registration>
+					<order>
+						<table>cp_marketplace_orders</table>
+					</order>
+					<order_item>
+						<table>cp_marketplace_order_items</table>
+					</order_item>
+                    <order_shipment>
+                        <table>cp_marketplace_order_shipment</table>
+                    </order_shipment>
+					<prices>
+						<table>cp_prices</table>
+					</prices>
+					<logs>
+						<table>cp_logging</table>
+					</logs>
+				</entities>
+			</channelpilot_resource>
+		</models>
+		<resources>
+			<default_setup>
+				<connection>
+					<charset>utf8</charset>
+				</connection>
+			</default_setup>
+			<channelpilot_setup>
+				<setup>
+					<module>Channelpilotsolutions_Channelpilot</module>
+				</setup>
+				<connection>
+					<charset>utf8</charset>
+					<use>core_setup</use>
+				</connection>
+			</channelpilot_setup>
+		</resources>
+		<extraconfig />
+		<blocks>
+			<channelpilot_core>
+				<class>Channelpilotsolutions_Channelpilot_Block</class>
+			</channelpilot_core>
+		</blocks>
+		<helpers>
+			<channelpilot>
+				<class>Channelpilotsolutions_Channelpilot_Helper</class>
+			</channelpilot>
+		</helpers>
+	</global>
+	<adminhtml>
+		<translate>
+			<modules>
+				<Channelpilotsolutions_Channelpilot>
+					<files>
+						<default>Channelpilotsolutions_Channelpilot.csv</default>
+					</files>
+				</Channelpilotsolutions_Channelpilot>
+			</modules>
+		</translate>
+		<layout>
+			<updates>
+				<channelpilot>
+					<file>Channelpilotsolutions/channelpilot.xml</file>
+				</channelpilot>
+			</updates>
+		</layout>
+	</adminhtml>
+	<frontend>
+		<routers>
+			<channelpilot>
+				<use>standard</use>
+				<args>
+					<module>Channelpilotsolutions_Channelpilot</module>
+					<frontName>channelpilot</frontName>
+				</args>
+			</channelpilot>
+		</routers>
+		<layout>
+			<updates>
+				<channelpilotsolutions_channelpilot>
+					<file>Channelpilotsolutions/channelpilot.xml</file>
+				</channelpilotsolutions_channelpilot>
+			</updates>
+		</layout>
+	</frontend>
+	<default>
+        <payment>
+            <cp_mp>
+                <active>0</active>
+                <model>channelpilot/payment</model>
+                <order_status>processing</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <email_customer>0</email_customer>
+				<title>ChannelPilot Marketplace Payment</title>
+            </cp_mp>
+        </payment>
+		<carriers>
+			<cpshipping>
+				<active>0</active>
+                <backend_only>1</backend_only>
+                <price>0.0</price>
+				<sallowspecific>0</sallowspecific>
+				<model>channelpilot/carrier_cpshipping</model>
+				<name>ChannelPilot Shipping</name>
+				<title>ChannelPilot Shipping</title>
+				<specificerrmsg>This shipping method is currently unavailable.</specificerrmsg>
+			</cpshipping>
+		</carriers>
+        <channelpilot_general>
+            <channelpilot_general>
+                <channelpilot_useNews>0</channelpilot_useNews>
+                <channelpilot_checkIp>1</channelpilot_checkIp>
+                <channelpilot_articlenumber>product_id</channelpilot_articlenumber>
+            </channelpilot_general>
+        </channelpilot_general>
+        <channelpilot_tracking>
+            <channelpilot_tracking>
+                <channelpilot_useTracking>0</channelpilot_useTracking>
+                <method>2</method>
+                <channelpilot_cookiemode>last</channelpilot_cookiemode>
+            </channelpilot_tracking>
+        </channelpilot_tracking>
+        <channelpilot_export>
+            <channelpilot_productfeed>
+                <channelpilot_useExport>0</channelpilot_useExport>
+            </channelpilot_productfeed>
+        </channelpilot_export>
+        <channelpilot_marketplace>
+            <channelpilot_marketplace>
+                <channelpilot_useMarketplaces>0</channelpilot_useMarketplaces>
+            </channelpilot_marketplace>
+        </channelpilot_marketplace>
+        <channelpilot_pricecontrol>
+            <channelpilot_general>
+                <channelpilot_usePricecontrol>0</channelpilot_usePricecontrol>
+                <channelpilot_saveGrossOrNetPrices>gross</channelpilot_saveGrossOrNetPrices>
+                <channelpilot_generalPriceField>price</channelpilot_generalPriceField>
+            </channelpilot_general>
+        </channelpilot_pricecontrol>
+    </default>
+</config>

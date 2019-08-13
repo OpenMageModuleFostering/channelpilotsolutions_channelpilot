@@ -1,0 +1,576 @@
+<?xml version="1.0"?><!--
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Channelpilotsolutions_Channelpilot to newer
+ * versions in the future. If you wish to customize Channelpilotsolutions_Channelpilot for your
+ * needs please refer to http://www.channelpilot.com for more information.
+ *
+ * @category        Channelpilotsolutions
+ * @package         Channelpilotsolutions_Channelpilot
+ * @subpackage		etc
+ * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
+ * @author          Peter Hoffmann <info@channelpilot.com>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.channelpilot.com
+ */
+-->
+<config>
+	<tabs>
+		<channelpilot_config translate="label" module="channelpilot">
+			<!--<label>Channelpilot</label>-->
+			<label><![CDATA[<div style="overflow:hidden; background-image: url('https://go.channelpilot.com/css/gfx/logo.channelPilot.png');background-size: 150px; background-repeat: no-repeat; background-position: -4px -9px;"><div style="display:block; height: 20px;"></div></div>]]></label>
+			<class>tab-channelpilot</class>
+			<sort_order>401</sort_order>
+		</channelpilot_config>
+	</tabs>
+	<sections>
+		<channelpilot_general translate="label" module="channelpilot">
+			<label>CP General</label>
+			<tab>channelpilot_config</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>1000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<hint>
+                    <frontend_model>channelpilot_core/adminhtml_hintlogo</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+				<channelpilot_general translate="label">
+					<label>CP General Settings</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>1</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_useNews>
+							<label>CP Activate backendnews?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_useNews>
+						<channelpilot_checkIp>
+							<label>CP Should the IP for API access be checked?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_checkIp>
+						<channelpilot_articlenumber>
+							<label>CP Articlenumber</label>
+							<comment>CP This applies to the tracking as well as the marketplace integration or the repricing.</comment>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/articlenumber_values</source_model>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_articlenumber>
+					</fields>
+				</channelpilot_general>
+			</groups>
+		</channelpilot_general>
+		<channelpilot_tracking translate="label" module="channelpilot">
+			<label>CP Tracking</label>
+			<tab>channelpilot_config</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>2000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<hint>
+                    <frontend_model>channelpilot_core/adminhtml_hintlogo</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+				<channelpilot_tracking translate="label">
+					<label>CP Tracking Settings</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>2</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_useTracking>
+							<label>CP Activate?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_useTracking>
+                        <method>
+                            <label>CP Tracking Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channelpilot/adminhtml_source_trackingmethod</source_model>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </method>
+						<channelpilot_cookiemode>
+							<label>CP Cookiemode</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/cookiemode_values</source_model>
+							<sort_order>10</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_cookiemode>
+						<channelpilot_trackingkeys>
+							<label>CP Trackingkeys</label>
+							<frontend_model>channelpilot_core/adminhtml_field_trackingkeys</frontend_model>
+							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+							<sort_order>20</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_trackingkeys>
+					</fields>
+				</channelpilot_tracking>
+			</groups>
+		</channelpilot_tracking>
+		<channelpilot_export translate="label" module="channelpilot">
+			<label>CP Data Feed Export</label>
+			<tab>channelpilot_config</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>3000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<hint>
+                    <frontend_model>channelpilot_core/adminhtml_hintlogo</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+				<channelpilot_productfeed translate="label">
+					<label>CP Export Settings</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>1</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_useExport>
+							<label>CP Activate?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_useExport>
+						<channelpilot_password translate="label">
+							<label>CP Password</label>
+							<comment>CP Protect your data feed with a password. For example: 'www.testshop.com/channelpilot?password=12345'</comment>
+							<frontend_type>password</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_password>
+						<channelpilot_exportfields>
+							<label>CP Select data fields</label>
+							<comment>CP Select the data fields you want to provide on ChannelPilot. Some product attributes are always included. (Entity_Id, Sku, name, description, price, manufacturer, color, categories, product_url, image_url, additional_image_1, additional_image_2, additional_image_3, weight)</comment>
+							<frontend_model>channelpilot_core/adminhtml_field_exportfields</frontend_model>
+							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_exportfields>
+						<channelpilot_specialexportfields>
+							<label>CP Create static data fields</label>
+							<comment>CP Set up additional data fields. These fields have for every product the same value. E.g. for additional delivery costs.</comment>
+							<frontend_model>channelpilot_core/adminhtml_field_specialfields</frontend_model>
+							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_specialexportfields>
+						<channelpilot_replacefields>
+							<label>CP Product variant data fields</label>
+							<comment>CP Select the data fields you want to be overwritten by the respective value of the parent article.</comment>
+							<frontend_model>channelpilot_core/adminhtml_field_replacefields</frontend_model>
+							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_replacefields>
+						<channelpilot_imagenumber>
+							<label>CP Number additional productimages</label>
+							<comment>CP How many additional productimages should be exported?</comment>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/imagenumber_values</source_model>
+							<sort_order>5</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_imagenumber>
+					</fields>
+				</channelpilot_productfeed>
+			</groups>
+		</channelpilot_export>
+		<channelpilot_marketplace translate="label" module="channelpilot">
+			<label>CP Marketplace Integration</label>
+			<tab>channelpilot_config</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>4000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<hint>
+                    <frontend_model>channelpilot_core/adminhtml_hintlogo</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+				<channelpilot_marketplace translate="label">
+					<label>CP Marketplace Integration Settings</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>3</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_useMarketplaces>
+							<label>CP Activate?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_useMarketplaces>
+						<channelpilot_orderStatusImportedPayed>
+							<label>CP OrderStatus Imported (payed)?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_orderStatusImportedPayed>
+						<channelpilot_orderStatusImportedUnpayed>
+							<label>CP OrderStatus Imported (unpayed)?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_orderStatusImportedUnpayed>
+<!--						<channelpilot_orderStatusPayed>
+							<label>CP OrderStatus Payed?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_orderStatusPayed>
+						<channelpilot_orderStatusCancelled>
+							<label>CP OrderStatus Cancelled?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
+							<sort_order>4</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_orderStatusCancelled>
+						<channelpilot_orderStatusDeliveried>
+							<label>CP OrderStatus Deliveried?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
+							<sort_order>5</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_orderStatusDeliveried>-->
+					</fields>
+				</channelpilot_marketplace>
+			</groups>
+		</channelpilot_marketplace>
+		<channelpilot_pricecontrol translate="label" module="channelpilot">
+			<label>CP Repricing</label>
+			<tab>channelpilot_config</tab>
+			<frontend_type>text</frontend_type>
+			<sort_order>5000</sort_order>
+			<show_in_default>1</show_in_default>
+			<show_in_website>1</show_in_website>
+			<show_in_store>1</show_in_store>
+			<groups>
+				<hint>
+                    <frontend_model>channelpilot_core/adminhtml_hintlogo</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+				<channelpilot_general translate="label">
+					<label>CP Repricing Settings</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>1</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_usePricecontrol>
+							<label>CP Activate?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_usePricecontrol>
+						<channelpilot_saveGrossOrNetPrices>
+							<label>CP Save prices net or gross?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/grossnet_values</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_saveGrossOrNetPrices>
+					</fields>
+				</channelpilot_general>
+				<general_prices translate="label">
+					<label>CP General Repricing</label>
+					<frontend_type>text</frontend_type>
+					<expanded>1</expanded>
+					<sort_order>2</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<!--						<channelpilot_usePricecontrol>
+							<label>Active</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/truefalse_values</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_usePricecontrol>-->
+						<channelpilot_generalPriceField>
+							<label>CP Field for price</label>
+							<comment>CP This field would be overwritten by the new product price.</comment>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/pricefield_values</source_model>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_generalPriceField>
+					</fields>
+				</general_prices>
+				<!--				<campaign_prices translate="label">
+					<label>Campaign Price Control</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>3</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<channelpilot_usePricecontrol>
+							<label>Active</label>
+							<frontend_type>select</frontend_type>
+							<source_model>channelpilot_adminhtml/truefalse_values</source_model>
+							<sort_order>0</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</channelpilot_usePricecontrol>
+					</fields>
+				</campaign_prices>-->
+			</groups>
+		</channelpilot_pricecontrol>
+		<payment>
+			<groups>
+				<cp_mp translate="label comment" module="channelpilot">
+					<label>CP ChannelPilot-Payment</label>
+					<expanded>1</expanded>
+					<sort_order>670</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>0</show_in_store>
+					<comment>CP !!!This is no real payment method!!!</comment>
+					<fields>
+						<title translate="label">
+							<label>CP Title</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>1</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>0</show_in_store>
+						</title>
+						<active translate="label">
+							<label>CP Activate?</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>2</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>0</show_in_store>
+						</active>
+						<order_status translate="label">
+							<label>CP Order Status</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_order_status_processing</source_model>
+							<sort_order>3</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>0</show_in_store>
+						</order_status>
+						<types translate="label">
+                            <label>CP Payment Types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>channelpilot/paymenttypes</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </types>
+					</fields>
+				</cp_mp>
+			</groups>
+		</payment>
+		<carriers>
+			<groups>
+				<cpshipping translate="label">
+					<label>CP ChannelPilot - Shipping Method</label>
+					<frontend_type>text</frontend_type>
+					<sort_order>50</sort_order>
+					<show_in_default>1</show_in_default>
+					<show_in_website>1</show_in_website>
+					<show_in_store>1</show_in_store>
+					<fields>
+						<active translate="label">
+							<label>CP Enabled</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>10</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</active>
+						<backend_only translate="label">
+							<label>CP Use for backend only</label>
+							<frontend_type>select</frontend_type>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<sort_order>15</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</backend_only>
+						<title translate="label">
+							<label>CP Title</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>20</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</title>
+						<name translate="label">
+							<label>CP Method Name</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>30</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</name>
+						<price translate="label">
+							<label>CP Price</label>
+							<frontend_type>text</frontend_type>
+							<validate>validate-number validate-zero-or-greater input-text</validate>
+							<sort_order>35</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</price>
+						<sallowspecific translate="label">
+							<label>CP Ship to Applicable Countries</label>
+							<frontend_type>select</frontend_type>
+							<sort_order>40</sort_order>
+							<frontend_class>shipping-applicable-country</frontend_class>
+							<source_model>adminhtml/system_config_source_shipping_allspecificcountries</source_model>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</sallowspecific>
+						<showmethod translate="label">
+							<label>CP Show Method if Not Applicable</label>
+							<frontend_type>select</frontend_type>
+							<sort_order>41</sort_order>
+							<source_model>adminhtml/system_config_source_yesno</source_model>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</showmethod>
+						<specificcountry translate="label">
+							<label>CP Ship to Specific Countries</label>
+							<frontend_type>multiselect</frontend_type>
+							<sort_order>42</sort_order>
+							<source_model>adminhtml/system_config_source_country</source_model>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+							<can_be_empty>1</can_be_empty>
+						</specificcountry>
+						<specificerrmsg translate="label">
+							<label>CP Displayed Error Message</label>
+							<frontend_type>textarea</frontend_type>
+							<sort_order>43</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</specificerrmsg>
+						<sort_order translate="label">
+							<label>CP Sort Order</label>
+							<frontend_type>text</frontend_type>
+							<sort_order>50</sort_order>
+							<show_in_default>1</show_in_default>
+							<show_in_website>1</show_in_website>
+							<show_in_store>1</show_in_store>
+						</sort_order>
+					</fields>
+				</cpshipping>
+			</groups>
+		</carriers>
+	</sections>
+</config>

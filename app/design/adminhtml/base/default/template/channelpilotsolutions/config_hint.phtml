@@ -1,0 +1,146 @@
+<?php
+$config = $_SERVER['REQUEST_URI'];
+
+$background_position = "0px";
+$background_gradient = "linear-gradient(-25deg, #d5e700 15%, #bad700 50%) repeat scroll 0 0 #cce100";
+if (strpos($config, "channelpilot_tracking") !== false) {
+	$background_position = "-66px";
+	$background_gradient = "linear-gradient(-25deg, #fb671a 15%, #f8390e 50%) repeat scroll 0 0 #fa5716";
+} else {
+	if (strpos($config, "channelpilot_marketplace") !== false) {
+		$background_position = "-132px";
+		$background_gradient = "linear-gradient(-25deg, #ffc11e 15%, #ff9810 50%) repeat scroll 0 0 #ffb319";
+	} else {
+		if (strpos($config, "channelpilot_pricecontrol") !== false) {
+			$background_position = "-198px";
+			$background_gradient = "linear-gradient(-25deg, #61bcd5 15%, #3590ba 50%) repeat scroll 0 0 #3590ba";
+		}
+	}
+}
+?>
+<style>
+	.content-header {
+		background: <?= $background_gradient ?>;
+		margin-bottom: 0;
+		border-bottom: 0;
+		padding-bottom: 0;
+	}
+	.content-header table{
+		padding: 5px 20px 5px 10px;
+		background-color: #3e352c;
+	}
+	.main-col-inner .content-header tbody{
+		height: 66px;
+		background-image: url('https://go.channelpilot.com/css/gfx/logo.channelPilot.png');
+		background-repeat: no-repeat;
+		background-position: 0 <?= $background_position ?>;
+		background-size: 264px;
+	}
+
+	.content-header-floating .content-header td{
+		height: 66px;
+		background-image: url('https://go.channelpilot.com/css/gfx/logo.channelPilot.png');
+		background-repeat: no-repeat;
+		background-position: 0 <?= $background_position ?>;
+		background-size: 264px;
+		min-width: 264px;
+	}
+
+	.content-header-floating .content-header tbody .form-buttons {
+		height: 55px;
+		background: none !important;
+	}
+	.content-header h3 {
+		display: none;
+	}
+	.content-header button{
+		margin-top: 23px;
+		margin-bottom: 22px !important;
+	}
+
+	.section-config:first-of-type .entry-edit-head {
+		padding-top: 10px;
+		padding-bottom: 0px;
+		margin-top: 0;
+		background: <?= $background_gradient ?>;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+		border-top: 2px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.section-config:first-of-type {
+		margin-top: 0px;
+	}
+
+	.section-config {
+		margin-top: 25px;
+	}
+
+	.section-config .entry-edit-head {
+		padding-top: 7px;
+		padding-bottom: 0px;
+		margin-top: 0;
+		background: none;
+	}
+
+	.section-config:first-of-type .entry-edit-head a{
+		font-weight: 600;
+		color: #fa5716;
+		margin-bottom: -2px;
+		border-top: 2px solid rgba(0, 0, 0, 0.1);
+		border-left: 2px solid rgba(0, 0, 0, 0.1);
+		border-right: 2px solid rgba(0, 0, 0, 0.1);
+	}
+
+	.section-config .entry-edit-head a{
+		font-family: "Open Sans";
+		font-weight: 300;
+		font-size: 13px;
+		float:left;
+		padding: 5px 20px 2px;
+		color: #53473b;
+		text-transform: uppercase;
+		background: #FFFFFF !important;
+	}
+
+	.section-config .entry-edit-head a:hover{
+		color: #fa5716;
+	}
+
+	.section-config:first-of-type fieldset {
+		padding-top: 25px;
+	}
+	.section-config fieldset {
+		font-size: 12px;
+		font-weight: 400;
+		font-family: "Open Sans";
+		border: 0px;
+		background: #FFFFFF !important;
+	}
+
+	.section-config fieldset select, .section-config fieldset input{
+		font-family: "Open Sans";
+		background: -moz-linear-gradient(center top , #d6cec6 0px, #ebe8e4 2em) repeat scroll 0 0 #e1dbd5;
+		padding: 3px 3px;
+	}
+
+	.form-list .label label {
+		margin-left: 10px;
+	}
+
+	.form-list .value .grid .headings{
+		background: #5c4f41;
+	}
+	.form-list .value .grid th, .form-list .value .grid td {
+		border: 0;
+	}
+	.form-list .value .grid th {
+		font-family: "Open Sans";
+		color: #ffffff;
+		font-size: 12px;
+		text-align: center;
+	}
+	.form-list .value .grid table{
+		border: 1px solid #3e352c;
+		background: rgba(62, 53, 44, 0.02);
+	}
+</style>

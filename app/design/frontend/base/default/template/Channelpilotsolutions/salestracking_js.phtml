@@ -1,0 +1,46 @@
+<?php
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Channelpilotsolutions_Clicktracking to newer
+ * versions in the future. If you wish to customize Channelpilotsolutions_Clicktracking for your
+ * needs please refer to http://www.channelpilot.com for more information.
+ *
+ * @category        Channelpilotsolutions
+ * @package         design_frontend_base_default
+ * @subpackage      template_Channelpilotsolutions
+ * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
+ * @author          Bj?rn Wehner <info@channelpilot.com>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.channelpilot.com
+ */
+?>
+<?php if($this->isEnabled() && !$this->isTrackingModeImage()): ?>
+    <?php $_order = $this->getOrder(); ?>
+
+    <?php if($_order): ?>
+        <script type="text/javascript">
+            var cpSale = {
+                trackingKey: "<?php echo $this->getTrackingKey(); ?>",
+                orderId: "<?php echo $_order->getId(); ?>",
+                orderTotal: <?php echo ($_order->getGrandTotal() - $_order->getTaxAmount()); ?>,
+                cookie: "<?php echo $this->getCookieMode(); ?>",
+                shoppingCart: new Array()
+            };
+
+            <?php $_productIdField = $this->getProductIdField(); ?>
+            <?php foreach($_order->getItemsCollection(array(), true) as $_item): ?>
+                cpSale.shoppingCart.push({id: "<?php echo $_item->getData($_productIdField); ?>", price: <?php echo $_item->getPrice(); ?>, amount: <?php echo $_item->getQtyOrdered(); ?>});
+            <?php endforeach; ?>
+        </script>
+
+        <script type="text/javascript" src="//content.cptrack.de/sales.js"></script>
+    <?php endif; ?>
+<?php endif; ?>
+

@@ -1,0 +1,34 @@
+<?xml version="1.0"?><!--
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Channelpilotsolutions_Channelpilot to newer
+ * versions in the future. If you wish to customize Channelpilotsolutions_Channelpilot for your
+ * needs please refer to http://www.channelpilot.com for more information.
+ *
+ * @category        Channelpilotsolutions
+ * @package         etc
+ * @subpackage      
+ * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
+ * @author          Peter Hoffmann <info@channelpilot.com>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.channelpilot.com
+ */
+-->
+<config>
+	<modules>
+		<Channelpilotsolutions_Channelpilot>
+			<active>true</active>
+			<codePool>community</codePool>
+			<depends>
+                <Mage_Payment/>
+            </depends>
+		</Channelpilotsolutions_Channelpilot>
+	</modules>
+</config>

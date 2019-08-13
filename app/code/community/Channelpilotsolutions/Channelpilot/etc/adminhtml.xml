@@ -1,0 +1,61 @@
+<?xml version="1.0"?><!--
+/**
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the GNU General Public License (GPL 3)
+ * that is bundled with this package in the file LICENSE.txt
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Channelpilotsolutions_Channelpilot to newer
+ * versions in the future. If you wish to customize Channelpilotsolutions_Channelpilot for your
+ * needs please refer to http://www.channelpilot.com for more information.
+ *
+ * @category        Channelpilotsolutions
+ * @package         Channelpilotsolutions_Channelpilot
+ * @subpackage		etc
+ * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
+ * @author          Peter Hoffmann <info@channelpilot.com>
+ * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
+ * @link            http://www.channelpilot.com
+ */
+-->
+<config>
+	<acl>   
+		<resources>
+			<admin>
+				<children>
+					<system>
+						<children>
+							<config>
+								<children>
+									<channelpilot_general translate="title" module="channelpilot">
+										<title>channelpilot_general Section</title>
+										<sort_order>100</sort_order>
+									</channelpilot_general>
+									<channelpilot_tracking translate="title" module="channelpilot">
+										<title>channelpilot_tracking Section</title>
+										<sort_order>200</sort_order>
+									</channelpilot_tracking>
+									<channelpilot_export translate="title" module="channelpilot">
+										<title>channelpilot_export Section</title>
+										<sort_order>300</sort_order>
+									</channelpilot_export>
+									<channelpilot_marketplace translate="title" module="channelpilot">
+										<title>channelpilot_marketplace Section</title>
+										<sort_order>400</sort_order>
+									</channelpilot_marketplace>
+									<channelpilot_pricecontrol translate="title" module="channelpilot">
+										<title>channelpilot_pricecontrol Section</title>
+										<sort_order>500</sort_order>
+									</channelpilot_pricecontrol>
+								</children>
+							</config>
+						</children>
+					</system>
+			   </children>
+		   </admin>
+	   </resources>
+	</acl>
+</config>
