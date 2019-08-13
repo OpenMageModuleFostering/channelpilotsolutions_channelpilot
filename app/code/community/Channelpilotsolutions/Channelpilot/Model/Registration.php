@@ -71,4 +71,14 @@ class Channelpilotsolutions_Channelpilot_Model_Registration extends Mage_Core_Mo
         }
         return $this->_getResource()->isIpAuthorized($ip);
     }
+
+    /**
+     * Load by the fields shopId and securityToken
+     * @param $shopId
+     * @param $token
+     * @return Channelpilotsolutions_Channelpilot_Model_Registration
+     */
+    public function loadByShopIdAndToken($shopId, $token) {
+        return $this->_getResource()->loadByShopIdAndToken($shopId, $token, $this);
+    }
 }

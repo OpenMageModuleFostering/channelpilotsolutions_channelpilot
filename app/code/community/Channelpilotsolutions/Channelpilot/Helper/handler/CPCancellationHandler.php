@@ -7,6 +7,8 @@
  */
 class CPCancellationHandler extends CPAbstractHandler {
 
+    protected $_shopId;
+
 	/**
 	 * Handle cancellation hook.
 	 * @return type
@@ -15,7 +17,7 @@ class CPCancellationHandler extends CPAbstractHandler {
         $token = Mage::app()->getRequest()->getParam('token', false);
         $method = Mage::app()->getRequest()->getParam('method', '');
 		if ($token && self::isIpAllowedViaSecurityToken($token)) {
-			self::checkConfig();
+            $this->_shopId = self::getShopId($token);
 			$cancelled = array();
 
 			$cancelledOrders = $this->getCancelledOrders();
@@ -66,7 +68,7 @@ class CPCancellationHandler extends CPAbstractHandler {
 		}
 	}
 
-	private function hookResult($moreAvailable) {
+	protected function hookResult($moreAvailable) {
 		$hook = new CPHookResponse();
 		$hook->resultCode = CPResultCodes::SUCCESS;
 		$hook->resultMessage = "CANCELLATION HOOK SUCCESS";
@@ -74,10 +76,11 @@ class CPCancellationHandler extends CPAbstractHandler {
 		$hook->writeResponse(self::defaultHeader, json_encode($hook));
 	}
 
-	private function getCancelledItems() {
+    protected function getCancelledItems() {
         $sResult = Mage::getModel('channelpilot/order_item')->getCollection()
             ->addFieldToSelect(array('order_item_id', 'marketplace_order_item_id', 'time' => new Zend_Db_Expr('NOW()')))
             ->addCanceledSalesOrderItemsFilter()
+            ->addFieldToFilter('cp_orders.shop', array('eq' => $this->_shopId))
             ->getData();
 
 		try {
@@ -110,7 +113,7 @@ class CPCancellationHandler extends CPAbstractHandler {
      * Update the channelpilot/order_item table to set the cancelled column.
      * @param array $orders
      */
-    private function _updateMarketplaceOrderItems(array $orders = array()) {
+    protected function _updateMarketplaceOrderItems(array $orders = array()) {
         foreach($orders as $order) {
             foreach($order->cancelledItems as $cpOrderItem) {
                 if($cpOrderItem->quantityCancelled > 0) {
@@ -123,11 +126,12 @@ class CPCancellationHandler extends CPAbstractHandler {
         }
     }
 
-	private function getCancelledOrders() {
+    protected function getCancelledOrders() {
 		try {
             $result = Mage::getModel('channelpilot/order')->getCollection()
                 ->addFieldToSelect(array('order_nr', 'marketplace', 'time' => new Zend_Db_Expr('NOW()'), 'status'))
                 ->addFieldToFilter('main_table.status', array('neq' => CPOrderStatus::ID_CANCELLED))
+                ->addFieldToFilter('main_table.shop', array('eq' => $this->_shopId))
                 ->addCancelledSalesOrderFilter()
                 ->getData();
 

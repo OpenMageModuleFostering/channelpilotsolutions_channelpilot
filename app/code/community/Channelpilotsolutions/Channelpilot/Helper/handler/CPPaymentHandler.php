@@ -18,11 +18,13 @@ class CPPaymentHandler extends CPAbstractHandler {
         if ($token && self::isIpAllowedViaSecurityToken($token)) {
             $limit = Mage::app()->getRequest()->getParam('limit', false);
             if ($limit) {
+                $shopId = self::getShopId($token);
                 $sResult = Mage::getModel('channelpilot/order')->getCollection()
                     ->addFieldToSelect(array('marketplace_order_id', 'marketplace', 'status'))
                     ->addIsPaidFilter()
                     ->addFieldToFilter('main_table.status', array('eq' => CPOrderStatus::ID_IMPORTED))
                     ->addFieldToFilter('main_table.order_paid', array('eq' => Channelpilotsolutions_Channelpilot_Model_Order::CP_ORDER_UNPAID))
+                    ->addFieldToFilter('main_table.shop', array('eq' => $shopId))
                     ->setPageSize((int)$limit)
                     ->getData();
 
@@ -74,7 +76,7 @@ class CPPaymentHandler extends CPAbstractHandler {
         return "Error during handle paymentHook";
     }
 
-    private function hookResult($moreAvailable) {
+    protected function hookResult($moreAvailable) {
         $hook = new CPHookResponse();
         $hook->resultCode = CPResultCodes::SUCCESS;
         $hook->resultMessage = "PAYMENT HOOK SUCCESS";

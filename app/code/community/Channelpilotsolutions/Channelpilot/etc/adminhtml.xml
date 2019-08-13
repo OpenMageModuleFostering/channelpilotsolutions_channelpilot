@@ -22,12 +22,35 @@
  */
 -->
 <config>
-	<acl>   
+    <menu>
+        <system translate="title" module="adminhtml">
+            <children>
+                <convert>
+                    <children>
+                        <cp_product_feed_export translate="title" module="channelpilot">
+                            <title>CP Channelpilot Product Feed Export</title>
+                            <action>adminhtml/channelpilot_feedexport</action>
+                            <sort_order>100</sort_order>
+                        </cp_product_feed_export>
+                    </children>
+                </convert>
+            </children>
+        </system>
+    </menu>
+	<acl>
 		<resources>
 			<admin>
 				<children>
 					<system>
 						<children>
+                            <convert>
+                                <children>
+                                    <cp_product_feed_export>
+                                        <title>CP Channelpilot Product Feed Export</title>
+                                        <sort_order>100</sort_order>
+                                    </cp_product_feed_export>
+                                </children>
+                            </convert>
 							<config>
 								<children>
 									<channelpilot_general translate="title" module="channelpilot">

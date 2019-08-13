@@ -41,12 +41,14 @@ class Channelpilotsolutions_Channelpilot_Model_Resource_Order_Item extends Mage_
             $write->beginTransaction();
             try {
                 foreach($cpCancellation as $cpCancellationItem) {
-                    foreach($cpCancellationItem->cancelledItems as $cpOrderItem) {
-                        if($cpOrderItem->quantityCancelled > 0) {
-                            $ret = $write->update($this->getMainTable(),
-                                array('cancelled' => $cpOrderItem->quantityCancelled),
-                                sprintf('order_item_id = %s', $cpOrderItem->id)
-                            );
+                    if(is_object($cpCancellationItem) && isset($cpCancellationItem->cancelledItems)) {
+                        foreach($cpCancellationItem->cancelledItems as $cpOrderItem) {
+                            if($cpOrderItem->quantityCancelled > 0) {
+                                $ret = $write->update($this->getMainTable(),
+                                    array('cancelled' => $cpOrderItem->quantityCancelled),
+                                    sprintf('order_item_id = %s', $cpOrderItem->id)
+                                );
+                            }
                         }
                     }
                 }

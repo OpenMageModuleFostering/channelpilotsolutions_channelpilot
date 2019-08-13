@@ -11,7 +11,6 @@ class CPRegisterHandler extends CPAbstractHandler {
 	 * Handle register event
 	 */
 	public function handle() {
-		self::checkConfig();
 		$new = false;
 
         $multishopId = Mage::app()->getRequest()->getParam('multishopid', false);
@@ -31,44 +30,21 @@ class CPRegisterHandler extends CPAbstractHandler {
                     'ips_authorized'        => $ips,
                     'merchantId'            => $merchantId,
                     'securityToken'         => $token,
+                    'shopId'                => $multishopId,
                 );
 
-				if (self::isShopRegistered($multishopId)) {
-					if (self::isIpAllowedViaShopId($multishopId)) {
-						if (self::reRegisterParameterSet(true) == true) {
-							try {
-                                $registration->load($multishopId);
-                                $registration->addData($data)
-                                    ->save();
-								$new = false;
-							} catch (Exception $e) {
-								CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Exception during reregister Shop: " . $e->getMessage(), "Exception during reregister Shop: " . $e->getMessage());
-							}
-						} else {
-							CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Shop '" . $multishopId . "' not registered", "Shop '" . $multishopId . "' not registered");
-						}
-					} else {
-						if (empty($token)) {
-							CPErrorHandler::handle(CPErrors::RESULT_MISSING_PARAMS, "no token found", "no token found");
-						} else {
-							CPErrorHandler::handle(CPErrors::RESULT_FAILED, "ip not allowed by token: " . $token, "ip not allowed by token: " . $token);
-						}
-					}
-				} else {
-					if (self::reRegisterParameterSet(false) == false) {
-                        $data['shopId'] = $multishopId;
-						try {
-                            $registration->setData($data)
-                                ->save();
-							$new = true;
-						} catch (Exception $e) {
-							CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Exception during register Shop: " . $e->getMessage(), "Exception during register Shop: " . $e->getMessage());
-						}
-					} else {
-						CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Shop '" . $multishopId . "' already not registered", "Shop '" . $multishopId . "' already not registered");
-					}
-				}
-			}
+                try {
+                    $registration->loadByShopIdAndToken($multishopId, $token);
+                    $registrationId = $registration->getId();
+                    $new = (empty($registrationId));
+                    $registration->addData($data)
+                        ->save();
+                } catch (Exception $e) {
+                    CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Exception during reregister Shop: " . $e->getMessage(), "Exception during reregister Shop: " . $e->getMessage());
+                }
+			} else {
+                CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "shop not found: " . $multishopId, "shop not found: " . $multishopId);
+            }
 		} else {
             CPErrorHandler::handle(CPErrors::RESULT_MISSING_PARAMS, "not enough parameter for method: " . $method, "not enough parameter for method: " . $method);
         }

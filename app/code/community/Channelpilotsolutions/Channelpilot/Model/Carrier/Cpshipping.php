@@ -16,7 +16,7 @@
  * @category        Channelpilotsolutions
  * @package         Channelpilotsolutions_Channelpilot
  * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
- * @author          Björn Wehner <info@channelpilot.com>
+ * @author          Bjï¿½rn Wehner <info@channelpilot.com>
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.channelpilot.com
  */
@@ -39,7 +39,7 @@ class Channelpilotsolutions_Channelpilot_Model_Carrier_Cpshipping
     protected function isAdmin() {
         $token = Mage::app()->getRequest()->getParam('token', false);
         if($token) {
-            if(CPAbstractHandler::isIpAllowedViaSecurityToken($token)) {
+            if(CPAbstractHandler::isIpAllowedViaSecurityToken($token, false)) {
                 return true;
             }
         }

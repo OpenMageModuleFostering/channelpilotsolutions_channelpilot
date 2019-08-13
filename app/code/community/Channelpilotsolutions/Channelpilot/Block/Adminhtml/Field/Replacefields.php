@@ -49,7 +49,8 @@ class Channelpilotsolutions_Channelpilot_Block_Adminhtml_Field_Replacefields ext
 			$attributes[]['attribute_code'] = 'qty';
 			$attributes[]['attribute_code'] = 'stock_status';
 			$attributes[]['attribute_code'] = 'cp_color_attribute_id';
-			$attributes[]['attribute_code'] = 'parent_id';
+            $attributes[]['attribute_code'] = 'min_sale_qty';
+            $attributes[]['attribute_code'] = 'max_sale_qty';
 
 			$attributes[]['attribute_code'] = 'categories';
 			$attributes[]['attribute_code'] = 'cp_image_url';
@@ -59,7 +60,7 @@ class Channelpilotsolutions_Channelpilot_Block_Adminhtml_Field_Replacefields ext
 			$attributes[]['attribute_code'] = 'cp_additional_image_3';
 			asort($attributes);
 			foreach ($attributes as $attribute) {
-				$rendered .= '<option value="' . $attribute['attribute_code'] . '">' . $attribute['attribute_code'] . '</option>';
+                $rendered .= '<option value="' . $attribute['attribute_code'] . '">' . $attribute['attribute_code'] . '</option>';
 			}
 			$rendered .= '</select>';
 			return $rendered;

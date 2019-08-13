@@ -160,13 +160,6 @@ class Channelpilotsolutions_Channelpilot_Helper_Data extends Mage_Core_Helper_Ab
 				break;
 
 			// Send method + limit + shopId ( + last)
-			case self::GET_EXPORT:
-				$this->checkActivation(array($exportActive), 'export');
-				$handler = new CPExportHandler();
-				$hook = $handler->handle(CPExportHandler::METHOD_JSON);
-				break;
-
-			// Send method + limit + shopId ( + last)
 			case self::GET_DEBUG:
 				$this->checkSignature();
 				$handler = new CPDebugHandler();
@@ -189,7 +182,7 @@ class Channelpilotsolutions_Channelpilot_Helper_Data extends Mage_Core_Helper_Ab
 		exit();
 	}
 
-	private function checkSignature() {
+    protected function checkSignature() {
         $php = Mage::app()->getRequest()->getParam('php', false);
         $shop = Mage::app()->getRequest()->getParam('shop', false);
         $plugin = Mage::app()->getRequest()->getParam('plugin', false);
@@ -203,7 +196,7 @@ class Channelpilotsolutions_Channelpilot_Helper_Data extends Mage_Core_Helper_Ab
 		}
 	}
 
-	private function checkActivation($configs, $function) {
+    protected function checkActivation($configs, $function) {
 		foreach ($configs as $config) {
 			if ($config === true) {
 				return true;
@@ -212,12 +205,23 @@ class Channelpilotsolutions_Channelpilot_Helper_Data extends Mage_Core_Helper_Ab
 		CPErrorHandler::handle(CPErrors::RESULT_API_DEACTIVATED, "'$function' not activated", "'$function' not activated");
 	}
 
-	private function checkIp() {
+    protected function checkIp() {
 		if (Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_checkIp')) {
-            return Mage::getModel('channelpilot/registration')->isIpAuthorized($_SERVER['REMOTE_ADDR']);
+            return Mage::getModel('channelpilot/registration')->isIpAuthorized(Mage::app()->getRequest()->getClientIp());
 		}
 		return true;
 	}
+
+    public function getAllStoreIds() {
+        $storeIds = array();
+
+        /** @var  $website Mage_Core_Model_Website */
+        foreach(Mage::app()->getWebsites() as $website) {
+            $storeIds = array_merge($storeIds, $website->getStoreIds());
+        }
+
+        return $storeIds;
+    }
 }
 
 ?>

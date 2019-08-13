@@ -1,4 +1,5 @@
-<?xml version="1.0"?><!--
+<?php
+
 /**
  *
  * NOTICE OF LICENSE
@@ -13,23 +14,19 @@
  * needs please refer to http://www.channelpilot.com for more information.
  *
  * @category        Channelpilotsolutions
- * @package         etc
- * @subpackage
+ * @package         Channelpilotsolutions_Channelpilot
  * @copyright       Copyright (c) 2012 <info@channelpilot.com> - www.channelpilot.com
- * @author          Peter Hoffmann <info@channelpilot.com>
+ * @author          Björn Wehner <info@channelpilot.com>
  * @license         <http://www.gnu.org/licenses/> GNU General Public License (GPL 3)
  * @link            http://www.channelpilot.com
  */
--->
-<config>
-	<modules>
-		<Channelpilotsolutions_Channelpilot>
-			<active>true</active>
-			<codePool>community</codePool>
-			<depends>
-                <Mage_Payment/>
-                <Mage_Index/>
-            </depends>
-		</Channelpilotsolutions_Channelpilot>
-	</modules>
-</config>
+class Channelpilotsolutions_Channelpilot_Model_Resource_Feedexport_Indexer_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
+{
+    /**
+     * Model initialization
+     *
+     */
+    protected function _construct() {
+        $this->_init('channelpilot/feedexport_indexer');
+    }
+}

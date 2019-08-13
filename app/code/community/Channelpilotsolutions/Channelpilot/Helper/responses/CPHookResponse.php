@@ -23,7 +23,7 @@ class CPHookResponse {
 
 		$this->signaturePlugin = self::getModuleVersion();
 		$this->signatureShop = self::getSignatureShop();
-		$this->signaturePhp = phpversion();
+		$this->signaturePhp = urlencode(phpversion());
 	}
 
 	public static function getSignatureShop() {
@@ -46,7 +46,7 @@ class CPHookResponse {
 	public function writeResponse($header, $response) {
 		header($header);
 		print_r($response);
-		exit();
+        exit();
 	}
 
 }

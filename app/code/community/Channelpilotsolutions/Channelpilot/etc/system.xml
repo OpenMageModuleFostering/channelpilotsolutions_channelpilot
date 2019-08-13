@@ -24,7 +24,6 @@
 <config>
 	<tabs>
 		<channelpilot_config translate="label" module="channelpilot">
-			<!--<label>Channelpilot</label>-->
 			<label><![CDATA[<div style="overflow:hidden; background-image: url('https://go.channelpilot.com/css/gfx/logo.channelPilot.png');background-size: 150px; background-repeat: no-repeat; background-position: -4px -9px;"><div style="display:block; height: 20px;"></div></div>]]></label>
 			<class>tab-channelpilot</class>
 			<sort_order>401</sort_order>
@@ -84,6 +83,15 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</channelpilot_articlenumber>
+                        <seller_api_wsdl_url>
+                            <label>CP Seller api wsdl url</label>
+                            <comment>CP Default url: https://seller.api.channelpilot.com/1_0?wsdl</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </seller_api_wsdl_url>
 					</fields>
 				</channelpilot_general>
 			</groups>
@@ -182,7 +190,7 @@
 							<label>CP Activate?</label>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
-							<sort_order>0</sort_order>
+							<sort_order>10</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -191,17 +199,36 @@
 							<label>CP Password</label>
 							<comment>CP Protect your data feed with a password. For example: 'www.testshop.com/channelpilot?password=12345'</comment>
 							<frontend_type>password</frontend_type>
-							<sort_order>1</sort_order>
+							<sort_order>20</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</channelpilot_password>
+                        <channelpilot_export_method>
+                            <label>CP Export Method</label>
+                            <comment>CP If you choose the indexed method, make sure that the 'Channelpilot Product Feed Export' index is always up to date. Please note, that if you select more than 40 data fields, that the indexed method will be used regardless of the selected option.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channelpilot/adminhtml_source_exportmethod</source_model>
+                            <sort_order>25</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </channelpilot_export_method>
+                        <product_url_generation_method>
+                            <label>CP Product Url Generation Method</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>channelpilot/adminhtml_source_producturlgeneration</source_model>
+                            <sort_order>29</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </product_url_generation_method>
 						<channelpilot_exportfields>
 							<label>CP Select data fields</label>
 							<comment>CP Select the data fields you want to provide on ChannelPilot. Some product attributes are always included. (Entity_Id, Sku, name, description, price, manufacturer, color, categories, product_url, image_url, additional_image_1, additional_image_2, additional_image_3, weight)</comment>
 							<frontend_model>channelpilot_core/adminhtml_field_exportfields</frontend_model>
 							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-							<sort_order>2</sort_order>
+							<sort_order>30</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -211,7 +238,7 @@
 							<comment>CP Set up additional data fields. These fields have for every product the same value. E.g. for additional delivery costs.</comment>
 							<frontend_model>channelpilot_core/adminhtml_field_specialfields</frontend_model>
 							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-							<sort_order>3</sort_order>
+							<sort_order>40</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -221,7 +248,7 @@
 							<comment>CP Select the data fields you want to be overwritten by the respective value of the parent article.</comment>
 							<frontend_model>channelpilot_core/adminhtml_field_replacefields</frontend_model>
 							<backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
-							<sort_order>4</sort_order>
+							<sort_order>50</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -231,7 +258,7 @@
 							<comment>CP How many additional productimages should be exported?</comment>
 							<frontend_type>select</frontend_type>
 							<source_model>channelpilot_adminhtml/imagenumber_values</source_model>
-							<sort_order>5</sort_order>
+							<sort_order>60</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
@@ -292,33 +319,16 @@
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
 						</channelpilot_orderStatusImportedUnpayed>
-<!--						<channelpilot_orderStatusPayed>
-							<label>CP OrderStatus Payed?</label>
-							<frontend_type>select</frontend_type>
-							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
-							<sort_order>3</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</channelpilot_orderStatusPayed>
-						<channelpilot_orderStatusCancelled>
-							<label>CP OrderStatus Cancelled?</label>
-							<frontend_type>select</frontend_type>
-							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
-							<sort_order>4</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</channelpilot_orderStatusCancelled>
-						<channelpilot_orderStatusDeliveried>
-							<label>CP OrderStatus Deliveried?</label>
-							<frontend_type>select</frontend_type>
-							<source_model>channelpilot_adminhtml/orderstatus_values</source_model>
-							<sort_order>5</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</channelpilot_orderStatusDeliveried>-->
+                        <use_admin_mode translate="label comment">
+                            <label>CP Use Admin Mode for order import</label>
+                            <comment>CP When importing marketplace orders you can use the admin mode. When choosing the admin mode please note that all checks are disabled thar are normally applied, like: ordering a product which amount is less than the configured minimum allowed quantity in shopping cart, import orders which have products that are sold out or the available amount is less than the ordered amount.</comment>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </use_admin_mode>
 					</fields>
 				</channelpilot_marketplace>
 			</groups>
@@ -377,15 +387,6 @@
 					<show_in_website>1</show_in_website>
 					<show_in_store>1</show_in_store>
 					<fields>
-						<!--						<channelpilot_usePricecontrol>
-							<label>Active</label>
-							<frontend_type>select</frontend_type>
-							<source_model>channelpilot_adminhtml/truefalse_values</source_model>
-							<sort_order>0</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</channelpilot_usePricecontrol>-->
 						<channelpilot_generalPriceField>
 							<label>CP Field for price</label>
 							<comment>CP This field would be overwritten by the new product price.</comment>
@@ -398,25 +399,6 @@
 						</channelpilot_generalPriceField>
 					</fields>
 				</general_prices>
-				<!--				<campaign_prices translate="label">
-					<label>Campaign Price Control</label>
-					<frontend_type>text</frontend_type>
-					<sort_order>3</sort_order>
-					<show_in_default>1</show_in_default>
-					<show_in_website>1</show_in_website>
-					<show_in_store>1</show_in_store>
-					<fields>
-						<channelpilot_usePricecontrol>
-							<label>Active</label>
-							<frontend_type>select</frontend_type>
-							<source_model>channelpilot_adminhtml/truefalse_values</source_model>
-							<sort_order>0</sort_order>
-							<show_in_default>1</show_in_default>
-							<show_in_website>1</show_in_website>
-							<show_in_store>1</show_in_store>
-						</channelpilot_usePricecontrol>
-					</fields>
-				</campaign_prices>-->
 			</groups>
 		</channelpilot_pricecontrol>
 		<payment>

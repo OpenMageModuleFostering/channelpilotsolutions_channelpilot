@@ -30,7 +30,7 @@ class Channelpilotsolutions_Channelpilot_Model_Resource_Registration extends Mag
      *
      */
     protected function _construct() {
-        $this->_init('channelpilot/registration', 'shopId');
+        $this->_init('channelpilot/registration', 'id');
         $this->_isPkAutoIncrement = false;
     }
 
@@ -48,10 +48,15 @@ class Channelpilotsolutions_Channelpilot_Model_Resource_Registration extends Mag
                     ->from($this->getMainTable(), array('ips_authorized'))
                     ->where($read->quoteIdentifier($field). ' = ?', $value);
 
-                $result = $read->fetchRow($query);
+                $result = $read->fetchAll($query);
 
                 if(!empty($result)) {
-                    return explode(';', $result['ips_authorized']);
+                    $ipsAuthorized = array();
+                    foreach($result as $row) {
+                        $ipsAuthorized = array_merge($ipsAuthorized, explode(";", $row['ips_authorized']));
+                    }
+
+                    return $ipsAuthorized;
                 }
             }
         }
@@ -94,5 +99,29 @@ class Channelpilotsolutions_Channelpilot_Model_Resource_Registration extends Mag
             }
         }
         return false;
+    }
+
+    /**
+     * Load by the fields shopId and securityToken
+     * @param $shopId
+     * @param $token
+     * @param Channelpilotsolutions_Channelpilot_Model_Registration $object
+     * @return Channelpilotsolutions_Channelpilot_Model_Registration
+     */
+    public function loadByShopIdAndToken($shopId, $token, Channelpilotsolutions_Channelpilot_Model_Registration $object) {
+        $read = $this->getReadConnection();
+        if($read) {
+            $select = $read->select()
+                ->from($this->getMainTable())
+                ->where('shopId = ?', $shopId)
+                ->where('securityToken = ?', $token);
+
+            $result = $read->fetchRow($select);
+            if(!empty($result)) {
+                $object->setData($result);
+            }
+        }
+
+        return $object;
     }
 }

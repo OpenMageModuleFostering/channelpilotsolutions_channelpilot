@@ -24,10 +24,17 @@
 <config>
 	<modules>
 		<Channelpilotsolutions_Channelpilot>
-			<version>2.2.3</version>
+			<version>2.2.8</version>
 		</Channelpilotsolutions_Channelpilot>
 	</modules>
 	<global>
+        <index>
+            <indexer>
+                <channelpilot_feed_export>
+                    <model>channelpilot/feedexport_indexer</model>
+                </channelpilot_feed_export>
+            </indexer>
+        </index>
 		<models>
 			<channelpilot_adminhtml>
 				<class>Channelpilotsolutions_Channelpilot_Adminhtml_Model</class>
@@ -57,6 +64,9 @@
 					<logs>
 						<table>cp_logging</table>
 					</logs>
+                    <product_feed_export_index>
+                        <table>cp_product_feed_export_index</table>
+                    </product_feed_export_index>
 				</entities>
 			</channelpilot_resource>
 		</models>
@@ -87,6 +97,17 @@
 				<class>Channelpilotsolutions_Channelpilot_Helper</class>
 			</channelpilot>
 		</helpers>
+        <events>
+            <model_config_data_save_before>
+                <observers>
+                    <cp_check_for_changed_export_data_fields>
+                        <type>singleton</type>
+                        <class>channelpilot/observer</class>
+                        <method>modelConfigDataSaveBefore</method>
+                    </cp_check_for_changed_export_data_fields>
+                </observers>
+            </model_config_data_save_before>
+        </events>
 	</global>
 	<adminhtml>
 		<translate>
@@ -98,13 +119,13 @@
 				</Channelpilotsolutions_Channelpilot>
 			</modules>
 		</translate>
-		<layout>
-			<updates>
-				<channelpilot>
-					<file>Channelpilotsolutions/channelpilot.xml</file>
-				</channelpilot>
-			</updates>
-		</layout>
+        <layout>
+            <updates>
+                <channelpilotsolutions_channelpilot>
+                    <file>channelpilot.xml</file>
+                </channelpilotsolutions_channelpilot>
+            </updates>
+        </layout>
 	</adminhtml>
 	<frontend>
 		<routers>
@@ -153,6 +174,7 @@
                 <channelpilot_useNews>0</channelpilot_useNews>
                 <channelpilot_checkIp>1</channelpilot_checkIp>
                 <channelpilot_articlenumber>product_id</channelpilot_articlenumber>
+                <seller_api_wsdl_url>https://seller.api.channelpilot.com/1_0?wsdl</seller_api_wsdl_url>
             </channelpilot_general>
         </channelpilot_general>
         <channelpilot_tracking>
@@ -164,12 +186,15 @@
         </channelpilot_tracking>
         <channelpilot_export>
             <channelpilot_productfeed>
+                <channelpilot_export_method>1</channelpilot_export_method>
                 <channelpilot_useExport>0</channelpilot_useExport>
+                <product_url_generation_method>4</product_url_generation_method>
             </channelpilot_productfeed>
         </channelpilot_export>
         <channelpilot_marketplace>
             <channelpilot_marketplace>
                 <channelpilot_useMarketplaces>0</channelpilot_useMarketplaces>
+                <use_admin_mode>0</use_admin_mode>
             </channelpilot_marketplace>
         </channelpilot_marketplace>
         <channelpilot_pricecontrol>
@@ -180,4 +205,15 @@
             </channelpilot_general>
         </channelpilot_pricecontrol>
     </default>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Channelpilotsolutions_Channelpilot after="Mage_Adminhtml">Channelpilotsolutions_Channelpilot_Adminhtml</Channelpilotsolutions_Channelpilot>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
 </config>

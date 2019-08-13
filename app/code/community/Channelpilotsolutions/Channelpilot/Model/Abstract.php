@@ -152,7 +152,7 @@ class Channelpilotsolutions_Channelpilot_Model_Abstract extends Mage_Payment_Mod
 		return $params;
 	}
 
-	private function _getOrderId() {
+    protected function _getOrderId() {
 		$info = $this->getInfoInstance();
 
 		if ($this->_isPlaceOrder()) {
@@ -165,7 +165,7 @@ class Channelpilotsolutions_Channelpilot_Model_Abstract extends Mage_Payment_Mod
 		}
 	}
 
-	private function _getAmount() {
+    protected function _getAmount() {
 		$info = $this->getInfoInstance();
 		if ($this->_isPlaceOrder()) {
 			return (double) $info->getOrder()->getQuoteBaseGrandTotal();
@@ -174,7 +174,7 @@ class Channelpilotsolutions_Channelpilot_Model_Abstract extends Mage_Payment_Mod
 		}
 	}
 
-	private function _getCurrencyCode() {
+    protected function _getCurrencyCode() {
 		$info = $this->getInfoInstance();
 
 		if ($this->_isPlaceOrder()) {
@@ -184,7 +184,7 @@ class Channelpilotsolutions_Channelpilot_Model_Abstract extends Mage_Payment_Mod
 		}
 	}
 
-	private function _isPlaceOrder() {
+    protected function _isPlaceOrder() {
 		$info = $this->getInfoInstance();
 		if ($info instanceof Mage_Sales_Model_Quote_Payment) {
 			return false;

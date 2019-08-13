@@ -22,24 +22,32 @@ class CPAbstractHandler {
 	 * @return boolean
 	 */
 	public static function isIpAllowedViaShopId($shopId) {
-		if (self::ChannelPilot_IP == $_SERVER['REMOTE_ADDR'] || !Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_checkIp')) {
+        $clientIp = Mage::app()->getRequest()->getClientIp();
+		if (self::ChannelPilot_IP == $clientIp || !Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_checkIp')) {
 			return true;
 		} else {
-			return in_array($_SERVER['REMOTE_ADDR'], Mage::getModel('channelpilot/registration')->getAllowedIpsViaShopId($shopId));
+			return in_array($clientIp, Mage::getModel('channelpilot/registration')->getAllowedIpsViaShopId($shopId));
 		}
 	}
 
 	/**
-	 * Is the IP allowed for this securityToken
+	 * Is the IP allowed for this securityToken.
+     * The param $useConfigSettingCheckIp is currently use by the CpShipping carrier to prevent PayPal from
+     * using this shipping method if set to "backend_only". If the param is set to false the step to return true
+     * if the config setting to check the ip is set to false will be skipped.
 	 *
-	 * @param type $token
+	 * @param string $token
+     * @param bool $useConfigSettingCheckIp
 	 * @return boolean
 	 */
-	public static function isIpAllowedViaSecurityToken($token) {
-		if (self::ChannelPilot_IP == $_SERVER['REMOTE_ADDR'] || !Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_checkIp')) {
+	public static function isIpAllowedViaSecurityToken($token, $useConfigSettingCheckIp = true) {
+        $clientIp = Mage::app()->getRequest()->getClientIp();
+		if (self::ChannelPilot_IP == $clientIp) {
 			return true;
-		} else {
-			return in_array($_SERVER['REMOTE_ADDR'], Mage::getModel('channelpilot/registration')->getAllowedIpsViaSecurityToken($token));
+		} else if($useConfigSettingCheckIp && !Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_checkIp')) {
+            return true;
+        } else {
+			return in_array($clientIp, Mage::getModel('channelpilot/registration')->getAllowedIpsViaSecurityToken($token));
 		}
 	}
 
@@ -49,49 +57,67 @@ class CPAbstractHandler {
 	 * @param integer $shopId
 	 * @return boolean
 	 */
-	public static function isShopRegistered($shopId) {
+	public static function isShopRegistered($shopId, $token = null) {
         $collection = Mage::getSingleton('channelpilot/registration')->getCollection()
-            ->addFieldToSelect('shopId')
+            ->addFieldToSelect(array('shopId', 'securityToken'))
             ->addFieldToFilter('shopId', array('eq' => $shopId));
+
+        // if token is not null check if a shop with this token is registered otherwise all shops with $shopId
+        if($token !== null) {
+            $collection->addFieldToFilter('securityToken', array('eq' => $token));
+        }
 
         return (count($collection) > 0);
 	}
 
     /**
      * Get the merchantId for a security token.
-     * Returns NULL if record could not be found.
      * @param   string  $token
      * @return  mixed
      */
 	public static function getMerchantId($token) {
-        return Mage::getModel('channelpilot/registration')->load($token, 'securityToken')
+        $merchantId = Mage::getModel('channelpilot/registration')->load($token, 'securityToken')
             ->getData('merchantId');
+
+        if(empty($merchantId)) {
+            CPErrorHandler::handle(CPErrors::RESULT_FAILED,'No merchant id found for token.','No merchant id found for token.');
+        }
+
+        return $merchantId;
 	}
 
 	/**
 	 * Get shopId by token for registered shop.
-     * Returns NULL if no record could be found.
 	 *
 	 * @param   string    $token
 	 * @return  mixed
 	 */
 	public static function getShopId($token) {
-        return Mage::getModel('channelpilot/registration')->load($token, 'securityToken')
-            ->getId();
+        $shopId = Mage::getModel('channelpilot/registration')->load($token, 'securityToken')
+            ->getData('shopId');
+
+        if(empty($shopId)) {
+            CPErrorHandler::handle(CPErrors::RESULT_FAILED,'No shop id found for token.','No shop id found for token.');
+        }
+
+        return $shopId;
 	}
 
 	public static function changeStatusOrders($apiOrders) {
+        $defectiveOrderIncrementIds = array();
 		foreach ($apiOrders as $apiOrder) {
 			if ($apiOrder->header->resultCode == CPResultCodes::SUCCESS) {
 				self::changeStatusOrder($apiOrder->orderHeader);
 			} else {
-				self::logError("Cannot change orderstatus from order (id: '" . $apiOrder->orderHeader->orderId . "', status: '" . $apiOrder->orderHeader->status->identifier . "')");
+                $defectiveOrderIncrementIds[] = $apiOrder->orderHeader->orderId;
+				self::logError("Cannot change orderstatus from order (id: '" . $apiOrder->orderHeader->orderId . "', status: '" . $apiOrder->orderHeader->status->identifier . ", msg: ". $apiOrder->header->resultMessage .")");
 			}
 		}
+        return $defectiveOrderIncrementIds;
 	}
 
 	public static function changeStatusOrder($apiOrderHeader) {
-        if(!empty($apiOrderHeader->oderId)) {
+        if(!empty($apiOrderHeader->orderId)) {
             $order = Mage::getModel('channelpilot/order')->loadByOrderNr($apiOrderHeader->orderId);
             if($order && $order->getId()) {
                 $order->setData('status', $apiOrderHeader->status->identifier);
@@ -113,7 +139,8 @@ class CPAbstractHandler {
 	 * @param string $msg
 	 */
 	public static function logError($msg) {
-		$msg = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI] by IP: {$_SERVER['REMOTE_ADDR']}\n$msg";
+        $clientIp = Mage::app()->getRequest()->getClientIp();
+		$msg = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI] by IP: {$clientIp}\n$msg";
 
 		Mage::log("$msg\n\n", null, 'cp_plugin.log');
         Mage::getModel('channelpilot/logs')
@@ -121,22 +148,6 @@ class CPAbstractHandler {
             ->setData(array('created' => date('Y-m-d H:i:s'), 'content' => $msg))
             ->save();
 	}
-
-	public static function checkConfig() {
-		/* if(oxConfig::getInstance()->getShopConfVar('CPMARKETPLACE_ART_NUMBER')==2 && oxConfig::getInstance()->getShopConfVar('CPMARKETPLACE_ART_OTHERARTNUM')==''){
-		  CPErrorHandler::handle(CPErrors::RESULT_CONFIG_INVALID, "No column for other article number", "No column for other article number");
-		  }
-		  if(oxConfig::getInstance()->getShopConfVar('CPMARKETPLACE_IMPORT')==''){
-		  CPErrorHandler::handle(CPErrors::RESULT_CONFIG_INVALID, "No folder for unpaid orders", "No folder for unpaid orders");
-		  }
-		  if(oxConfig::getInstance()->getShopConfVar('CPMARKETPLACE_PAIDIMPORT')==''){
-		  CPErrorHandler::handle(CPErrors::RESULT_CONFIG_INVALID, "No folder for paid orders", "No folder for paid orders");
-		  }
-		  if(oxConfig::getInstance()->getShopConfVar('CPMARKETPLACE_CANCEL')==''){
-		  CPErrorHandler::handle(CPErrors::RESULT_CONFIG_INVALID, "No folder for cancelled orders", "No folder for cancelled orders");
-		  } */
-	}
-
 }
 
 ?>

@@ -73,7 +73,7 @@ class CPStatusHandler extends CPAbstractHandler {
 		$hook->writeResponse(self::defaultHeader, json_encode($hook));
 	}
 
-	private function getShops() {
+    protected function getShops() {
 		$allStores = Mage::app()->getStores();
 		$shops = array();
 		foreach ($allStores as $_eachStoreId => $val) {
@@ -90,7 +90,7 @@ class CPStatusHandler extends CPAbstractHandler {
 		return $shops;
 	}
 
-	private function getDeliveryTypes($shopId) {
+    protected function getDeliveryTypes($shopId) {
 		$carriers = Mage::getStoreConfig('carriers', $shopId);
 		$methods = Mage::getSingleton('shipping/config')->getActiveCarriers($shopId);
 		$deliveryTypes = array();
@@ -112,7 +112,7 @@ class CPStatusHandler extends CPAbstractHandler {
 		return $deliveryTypes;
 	}
 
-	private function getPaymentTypes($shopId) {
+    protected function getPaymentTypes($shopId) {
 		$paymentTypes = array();
 		$payments = Mage::getSingleton('payment/config')->getActiveMethods();
 		foreach ($payments as $paymentCode => $paymentModel) {
@@ -150,7 +150,7 @@ class CPStatusHandler extends CPAbstractHandler {
 		return $paymentTypes;
 	}
 
-	private function getCustomerGroups() {
+    protected function getCustomerGroups() {
 		$customerGroups = array();
         $customerGroupCollection = Mage::getModel('customer/group')->getCollection();
 		try {

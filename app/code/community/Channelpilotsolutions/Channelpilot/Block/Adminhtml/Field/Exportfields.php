@@ -53,6 +53,8 @@ class Channelpilotsolutions_Channelpilot_Block_Adminhtml_Field_Exportfields exte
 			$attributes[]['attribute_code'] = 'cp_color_attribute_id';
             $attributes[]['attribute_code'] = 'type_id';
             $attributes[]['attribute_code'] = 'parent_id';
+            $attributes[]['attribute_code'] = 'min_sale_qty';
+            $attributes[]['attribute_code'] = 'max_sale_qty';
 			asort($attributes);
 			foreach ($attributes as $attribute) {
                 if($attribute['attribute_code'] == 'group_price') {

@@ -44,7 +44,24 @@ class CPNewPriceHandler extends CPAbstractHandler {
 						CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Exception during set last_price_update: " . $e->getMessage(), " Exception during set last_price_update: " . $e->getMessage());
 					}
 				}
+
 				self::hookResult($result->moreAvailable, $unknownArticles);
+
+                /**
+                 *  reindex prices
+                 *
+                 *	1 = Product Attributes
+                 *	2 = Product prices
+                 *	3 = Catalog URL Rewrites
+                 *	4 = Product Flat Data
+                 *	5 = Category Flat Data
+                 *	6 = Category Products
+                 *	7 = Catalog Search Index
+                 *	8 = Stock Status
+                 *	9 = Tag Aggregation Data
+                 */
+                Mage::getModel('index/process')->load(2)->reindexEverything();
+                exit();
 			} else {
 				CPErrorHandler::handle(CPErrors::RESULT_MISSING_PARAMS, "no priceId set for method: " . $methodParam, "no priceId set for method: " . $methodParam);
 			}
@@ -63,7 +80,7 @@ class CPNewPriceHandler extends CPAbstractHandler {
      * @param   array       $unknownArticles
      * @return  mixed
      */
-    private function _manageArticlePrices($result, $token, &$unknownArticles) {
+    protected function _manageArticlePrices($result, $token, &$unknownArticles) {
         $lastPriceUpdate = null;
 
         $shopId = self::getShopId($token);
@@ -76,64 +93,75 @@ class CPNewPriceHandler extends CPAbstractHandler {
         $taxCalculation = Mage::getModel('tax/calculation');
         $taxRateRequest = $taxCalculation->getRateRequest(null, null, null, $store);
         $taxRates = array();
+
+        $priceField = Mage::getStoreConfig('channelpilot_pricecontrol/general_prices/channelpilot_generalPriceField');
+        $idField = Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_articlenumber');
+
+        if(!in_array($priceField, array('price', 'special_price'))) {
+            CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, " Error by choosing price field '$priceField'", "Error by choosing price field '$priceField'");
+        }
+
+        $resource = Mage::getModel('catalog/product')->getResource();
+
+        // in case the prices are net prices, store the tax rate for every product
+        if($useNet) {
+            $productIds = array();
+
+            // get every used product entity_id
+            foreach ($result->managedArticlePrices as $articlePrice) {
+                $id = $articlePrice->article->id;
+                if($idField == 'sku') {
+                    $id = Mage::getModel('catalog/product')->getIdBySku($articlePrice->article->id);
+                }
+                $productIds[] = $id;
+            }
+
+            // create a collection selecting the fields tax_class_id, entity_id and sku
+            // for all products from $result->managedArticlePrices
+            $collection = Mage::getModel('catalog/product')->getCollection()
+                ->addAttributeToSelect(array('tax_class_id', 'entity_id', 'sku'))
+                ->addFieldToFilter($idField, array('in' => $productIds));
+
+
+            // store the tax rate for every product
+            /** @var  $product Mage_Catalog_Model_Product */
+            foreach($collection as $product) {
+                $taxRates[$product->getId()] = $taxCalculation->getRate($taxRateRequest->setProductClassId($product->getTaxClassId()));
+            }
+        }
+
         foreach ($result->managedArticlePrices as $articlePrice) {
             $id = $articlePrice->article->id;
-            $articleNumber = Mage::getStoreConfig('channelpilot_general/channelpilot_general/channelpilot_articlenumber');
-            $product = null;
-            switch ($articleNumber) {
-                case 'product_id':
-                    $product = Mage::getSingleton('catalog/product')->load($id);
+            if($idField == 'sku') {
+                $id = Mage::getModel('catalog/product')->getIdBySku($articlePrice->article->id);
+            }
+
+            $product = Mage::getModel('catalog/product')
+                ->unsetData()
+                ->setId($id)
+                ->setStoreId($shopId);
+
+            $price = $useNet ? $articlePrice->price / (($taxRates[$id] / 100) + 1) : $articlePrice->price;
+            switch ($priceField) {
+                case 'price':
+                    $product->setPrice($price);
+                    $resource->saveAttribute($product, 'price');
                     break;
-                case 'sku':
-                    $product = Mage::getSingleton('catalog/product')->loadByAttribute('sku', $id);
+                case 'special_price':
+                    $product->setSpecialPrice($price);
+                    $resource->saveAttribute($product, 'special_price');
                     break;
                 default:
-                    CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, "Error by choosing article number '$articleNumber'", "Error by choosing article number '$articleNumber'");
+                    CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, " Error by choosing price field '$priceField'", "Error by choosing price field '$priceField'");
                     break;
-            }
-            if (empty($product)) {
-                $unknownArticles[] = $id;
-            } else {
-                if ($useNet && empty($taxRates[$product->getTaxClassId()])) {
-                    $taxRates[$product->getTaxClassId()] = $taxCalculation->getRate($taxRateRequest->setProductClassId($product->getTaxClassId()));
-                }
-                $price = $useNet ? $articlePrice->price / (($taxRates[$product->getTaxClassId()] / 100) + 1) : $articlePrice->price;
-                $field = Mage::getStoreConfig('channelpilot_pricecontrol/general_prices/channelpilot_generalPriceField');
-                switch ($field) {
-                    case 'price':
-                        Mage::getSingleton('catalog/product_action')->updateAttributes(array($product->entityId), array('price' => round($price, 4)), $shopId);
-                        break;
-                    case 'special_price':
-                        Mage::getSingleton('catalog/product_action')->updateAttributes(array($product->entityId), array('special_price' => round($price, 4)), $shopId);
-                        break;
-                    default:
-                        CPErrorHandler::handle(CPResultCodes::SYSTEM_ERROR, " Error by choosing price field '$field'", "Error by choosing price field '$field'");
-                        break;
-                }
             }
             $lastPriceUpdate = $articlePrice->lastUpdate;
         }
 
-
-        /**
-         *  reindex prices
-         *
-         *	1 = Product Attributes
-         *	2 = Product prices
-         *	3 = Catalog URL Rewrites
-         *	4 = Product Flat Data
-         *	5 = Category Flat Data
-         *	6 = Category Products
-         *	7 = Catalog Search Index
-         *	8 = Stock Status
-         *	9 = Tag Aggregation Data
-         */
-        Mage::getModel('index/process')->load(2)->reindexEverything();
-
         return $lastPriceUpdate;
     }
 
-	private function hookResult($moreAvailable, $errorArticles = null) {
+    protected function hookResult($moreAvailable, $errorArticles = null) {
 		$hook = new CPHookResponse();
 		$hook->resultCode = CPResultCodes::SUCCESS;
 		$hook->resultMessage = "NEW PRICE HOOK SUCCESS";
@@ -143,10 +171,23 @@ class CPNewPriceHandler extends CPAbstractHandler {
 		} else {
 			$hook->unknownArticles = $errorArticles;
 		}
-		$hook->writeResponse(self::defaultHeader, json_encode($hook));
+
+        // Turn off output buffering
+        ini_set('output_buffering', 'off');
+        // Turn off PHP output compression
+        ini_set('zlib.output_compression', false);
+
+        // Implicitly flush the buffer(s)
+        ini_set('implicit_flush', true);
+        ob_implicit_flush(true);
+
+        header(self::defaultHeader);
+        print_r(json_encode($hook));
+
+        ob_flush();
 	}
 
-	private function getLastPriceUpdate($priceId) {
+    protected function getLastPriceUpdate($priceId) {
         $cpPrices = Mage::getModel('channelpilot/prices')->load($priceId);
 		try {
 			if ($cpPrices && $cpPrices->getId()) {
