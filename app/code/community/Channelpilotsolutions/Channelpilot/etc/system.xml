@@ -85,7 +85,7 @@
 						</channelpilot_articlenumber>
                         <seller_api_wsdl_url>
                             <label>CP Seller api wsdl url</label>
-                            <comment>CP Default url: https://seller.api.channelpilot.com/2_0?wsdl</comment>
+                            <comment>CP Default url: https://seller.api.channelpilot.com/3_2?wsdl</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>40</sort_order>
                             <show_in_default>1</show_in_default>
