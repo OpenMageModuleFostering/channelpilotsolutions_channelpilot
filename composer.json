@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Channelpilotsolutions_Channelpilot",
+    "name": "OpenMageModuleFostering\/Channelpilotsolutions_Channelpilot",
     "type": "magento-module",
     "license": "GPL",
     "homepage": "",
     "description": "ChannelPilot is a powerful solution for professional multi-channel online marketing.",
     "authors": [
-    {
-        "name": "ChannelPilot Solutions GmbH",
-        "email": "info@channelpilot.com"
-    }
-],
+        {
+            "name": "ChannelPilot Solutions GmbH",
+            "email": "info@channelpilot.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
